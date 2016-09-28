@@ -113,6 +113,9 @@ def getAveCrashDaily(name, subtype, **kwargs):
     return int(round(countAve))
 
 
+def getVersionMostUsed():
+
+
 if __name__ == '__main__':
     # print getAveDailyActive("rom", **{"type": v.R1CM})
     # print getAveDailyActive("rom", **{"type": v.R1D})
