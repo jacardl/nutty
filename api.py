@@ -35,6 +35,7 @@ def getAveCount1ForSpecName(data, name):
         if len(countList) is not 0:
             countAve = reduce(lambda x, y: x + y, countList)/float(len(countList))
             return int(round(countAve))
+        return 0
 
 
 def getDailyActive(type, **kwargs):
@@ -58,6 +59,7 @@ def getDailyActive(type, **kwargs):
         for r in res.get("result"):
             if r.get("name") == "rom":
                 return int(r.get("count1"))
+            return 0
 
 
 def getAveDailyActive(dut, **kwargs):
@@ -98,6 +100,7 @@ def getClientAPPAveDailyActive(name, **kwargs):
     }
     option.update(kwargs)
     res = getApi(**option)
+    name = name.lower()
     return getAveCount1ForSpecName(res, name)
 
 
@@ -206,18 +209,13 @@ def getVersionMostUsedDailyActive(dut):
     version = res[0][0]
     count = res[0][1]
     return version, count
-    # if len(res[0]) is not 0:
-    #     channel = res[0][0][:-8]
-    #     version = res[0][0][-7:]
-    #     version = "%d.%d.%d" % (int(version[0]), int(version[1:4]), int(version[4:]))
-    #     count = res[0][1]
-    #     return channel, version, count
 
 
-def getClientAPPVersionMostUsedDaily(subtype):
+def getClientAPPVersionMostUsedDaily(dut):
     """
     :param subtype: android版本分布/ios版本分布
     """
+    subtype = dut.lower() + "版本分布"
     res = getVersionDistribDaily(v.CLIENT_VERSION_DIS, subtype)
     version = res[0][0]
     count = res[0][1]
@@ -238,7 +236,10 @@ def getSpecVersionKernelCrashAveDaily(dut, version, subtype, **kwargs):
         "start": v.START,
         "end": v.END
     }
-    name = ""
+    if dut.lower() == "android":
+        dut = "app"
+    elif dut.lower() == "ios":
+        dut = "ios"
     if subtype == "CrashLog用户数":
         name = dut + "-" + version
     elif subtype == "CrashLog次数":
@@ -291,6 +292,7 @@ def getSpecVersionDailyActive(dut, version):
         for r in res:
             if r[0].find(version) is not -1:
                 return int(r[1])
+        return 0
 
 
 def getSpecVersionAveDailyActive(dut, version):
@@ -307,6 +309,7 @@ def getSpecVersionAveDailyActive(dut, version):
         for r in res:
             if r[0].find(version) is not -1:
                 return int(r[1])
+        return 0
 
 
 def getSpecVersionDaemonCrashUserCountTop10Daily(dut, version):
@@ -338,8 +341,8 @@ if __name__ == '__main__':
     # print getKernelCrashAveDaily("R1CL", "CrashLog用户数")
     # print getKernelCrashAveDaily("R3", "CrashLog用户数")
     # print getKernelCrashAveDaily("R3L", "CrashLog用户数")
-    print getKernelCrashAveDaily("app", "CrashLog用户数")
-    print getKernelCrashAveDaily("ios", "CrashLog用户数")
+    # print getKernelCrashAveDaily("app", "CrashLog用户数")
+    # print getKernelCrashAveDaily("ios", "CrashLog用户数")
 
     # print getDaemonCrashAveDaily("R1CM", "CrashLog次数")
     # print getDaemonCrashAveDaily("R1D", "CrashLog次数")
@@ -362,10 +365,10 @@ if __name__ == '__main__':
     # print getVersionMostUsedDailyActive("R3")
     # print getVersionMostUsedDailyActive("R3L")
 
-    # version, count = getClientAPPVersionMostUsedDaily("android版本分布")
-    # version2, count2 = getClientAPPVersionMostUsedDaily("ios版本分布")
-    # print version, count
-    # print version2, count2
+    version, count = getClientAPPVersionMostUsedDaily("Android")
+    version2, count2 = getClientAPPVersionMostUsedDaily("iOS")
+    print version, count
+    print version2, count2
     # print getSpecVersionKernelCrashAveDaily(dut="app", version=version, subtype="CrashLog次数")
     # print getSpecVersionKernelCrashAveDaily(dut="app", version=version, subtype="CrashLog用户数")
     # print getSpecVersionKernelCrashAveDaily(dut="ios", version=version2, subtype="CrashLog次数")
