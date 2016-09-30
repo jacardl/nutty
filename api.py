@@ -1,6 +1,7 @@
 #coding=utf8
 __author__ = 'Jac'
 import requests
+import collections
 
 import var as v
 
@@ -12,10 +13,10 @@ def getApi(url=v.URL, **kwargs):
     #               "Accept-Encoding": "gzip, deflate, br",
     #             }
     option = {
-                "type": "482",
-                "subtype": "CrashLog次数",
-                "start": "2016-09-27",
-                "end": "2016-09-27",
+                "type": "",
+                "subtype": "",
+                "start": "",
+                "end": "",
             }
     option.update(kwargs)
     res = s.get(url=v.URL, params=option, timeout=10)
@@ -23,27 +24,43 @@ def getApi(url=v.URL, **kwargs):
     return eval(res.content)
 
 
-def getDailyActive(name, **kwargs):
+def getAveCount1ForSpecName(data, name):
+    countList = []
+    if data.get("status") is 1:
+        for r in data.get("result"):
+            if r.get("name") == name:
+                count = r.get("count1")
+                if count.isdigit():
+                    countList.append(int(count))
+        if len(countList) is not 0:
+            countAve = reduce(lambda x, y: x + y, countList)/float(len(countList))
+            return int(round(countAve))
+
+
+def getDailyActive(type, **kwargs):
     """
-     'result': [{'name': 'android', 'subtype': '\xe6\x97\xa5\xe6\xb4\xbb\xe8\xb7\x83', 'date': '2016-09-27 00:00:00.0',
-     'count1': '27291', 'count2': '0', 'type': 241},
+    :param name: rom/android/pc/mac/ios
+    :param type: v.R1CM/v.R1D/v.R2D...
+    :return:
+    'result': [{'name': 'rom', 'subtype': '\xe6\x97\xa5\xe6\xb4\xbb\xe8\xb7\x83', 'date': '2016-09-27 00:00:00.0',
+    'count1': '27291', 'count2': '0', 'type': 241},
     """
+
     option = {
         "type": type,
         "subtype": "日活跃",
-        "start": "",
-        "end": "",
+        "start": v.END,
+        "end": v.END,
     }
     option.update(kwargs)
     res = getApi(**option)
     if res.get("status") is 1:
         for r in res.get("result"):
-            if r.get("name") == name:
-                return r.get("count1")
-    else:
-        return False
+            if r.get("name") == "rom":
+                return int(r.get("count1"))
 
-def getAveDailyActive(name, **kwargs):
+
+def getAveDailyActive(type, **kwargs):
     """
      'result': [{'name': 'android', 'subtype': '\xe6\x97\xa5\xe6\xb4\xbb\xe8\xb7\x83', 'date': '2016-09-27 00:00:00.0',
      'count1': '27291', 'count2': '0', 'type': 241},
@@ -56,18 +73,10 @@ def getAveDailyActive(name, **kwargs):
     }
     option.update(kwargs)
     res = getApi(**option)
-    countList = []
-    if res.get("status") is 1:
-        for r in res.get("result"):
-            if r.get("name") == name:
-                count = r.get("count1")
-                if count.isdigit():
-                    countList.append(int(count))
-    countAve = reduce(lambda x, y: x + y, countList)/float(len(countList))
-    return int(round(countAve))
+    return getAveCount1ForSpecName(res, "rom")
 
 
-def getAveClientAPPDailyActive(name, **kwargs):
+def getClientAPPAveDailyActive(name, **kwargs):
     """
     {"status":1,"result":[{"count1":"1295724","count2":"0","date":"2016-09-21 00:00:00.0","name":"android","subtype":"月活跃用户","type":374},
     """
@@ -79,76 +88,254 @@ def getAveClientAPPDailyActive(name, **kwargs):
     }
     option.update(kwargs)
     res = getApi(**option)
-    countList = []
-    if res.get("status") is 1:
-        for r in res.get("result"):
-            if r.get("name") == name:
-                count = r.get("count1")
-                if count.isdigit():
-                    countList.append(int(count))
-    countAve = reduce(lambda x, y: x + y, countList)/float(len(countList))
-    return int(round(countAve))
+    return getAveCount1ForSpecName(res, name)
 
 
-def getAveCrashDaily(name, subtype, **kwargs):
+def getCrashAveDaily(name, subtype, **kwargs):
     """
     {"status":1,"result":[{"count1":"758","count2":"0","date":"2016-09-21 00:00:00.0","name":"app-kernel","subtype":"CrashLog次数","type":482}
     """
     option = {
-        "type": v.CRASH_KERNEL,
+        "type": v.CRASH,
         "subtype": subtype,
         "start": v.START,
         "end": v.END,
     }
     option.update(kwargs)
     res = getApi(**option)
-    countList = []
+    return getAveCount1ForSpecName(res, name)
+
+
+def getVersionDistribDaily(type, subtype):
+    """
+    {"status":1,"result":[{"count1":"2","count2":"0","date":"2016-09-21 00:00:00.0","name":"2.15.3","subtype":"活跃用户版本分布","type":338}
+    subtype: 全部活跃用户版本分布(R1D/R2D/R1CM)/全部活跃用户版本统计(R1CL/R3/R3L)/版本分布/android版本分布/ios版本分布
+    type: v.R1CM_VERSION_DIS/v.R1D_VERSION_DIS...
+    """
+    option = {
+        "type": type,
+        "subtype": subtype,
+        "start": v.END,
+        "end": v.END
+    }
+    res = getApi(**option)
+    versionDict = {}
     if res.get("status") is 1:
         for r in res.get("result"):
-            if r.get("name") == name:
-                count = r.get("count1")
-                if count.isdigit():
-                    countList.append(int(count))
-    countAve = reduce(lambda x, y: x + y, countList)/float(len(countList))
-    return int(round(countAve))
+            versionDict.update({r.get("name"): int(r.get("count1"))})
+        versionDict = sorted(versionDict.iteritems(), key=lambda x: x[1], reverse=True)
+        return versionDict
 
 
-def getVersionMostUsed():
+def getVersionDistribAveDaily(type, subtype, **kwargs):
+    """
+    {"status":1,"result":[{"count1":"2","count2":"0","date":"2016-09-21 00:00:00.0","name":"2.15.3","subtype":"活跃用户版本分布","type":338}
+    subtype: 全部活跃用户版本分布(R1D/R2D/R1CM)/全部活跃用户版本统计(R1CL/R3/R3L)/版本分布/android版本分布/ios版本分布
+    type: v.R1CM_VERSION_DIS/v.R1D_VERSION_DIS...
+    """
+    option = {
+        "type": type,
+        "subtype": subtype,
+        "start": v.START,
+        "end": v.END
+    }
+    option.update(kwargs)
+    res = getApi(**option)
+    versionDict = {}
+    if res.get("status") is 1:
+        for r in res.get("result"):
+            if r.get("name")
+            versionDict.update({r.get("name"): [int(r.get("count1"))]})
+        versionDict = sorted(versionDict.iteritems(), key=lambda x: x[1], reverse=True)
+        return versionDict
+
+
+def getVersionMostUsedDailyActive(dut):
+    """
+    :param type: v.R1CM_VERSION_DIS/v.R1D_VERSION_DIS/v.R2d_VERSION_DIS...
+    """
+    command = {
+        "R1CM": "getVersionDistribDaily(v.R1CM_VERSION_DIS, '全部活跃用户版本分布')",
+        "R1D": "getVersionDistribDaily(v.R1D_VERSION_DIS, '全部活跃用户版本分布')",
+        "R2D": "getVersionDistribDaily(v.R2D_VERSION_DIS, '全部活跃用户版本分布')",
+        "R1CL": "getVersionDistribDaily(v.R1CL_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3": "getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3L": "getVersionDistribDaily(v.R3L_VERSION_DIS, '全部活跃用户版本统计')",
+    }
+    res = eval(command.get(dut))
+    version = res[0][0]
+    count = res[0][1]
+    return version, count
+    # if len(res[0]) is not 0:
+    #     channel = res[0][0][:-8]
+    #     version = res[0][0][-7:]
+    #     version = "%d.%d.%d" % (int(version[0]), int(version[1:4]), int(version[4:]))
+    #     count = res[0][1]
+    #     return channel, version, count
+
+
+def getClientAPPVersionMostUsedDaily(subtype):
+    """
+    :param subtype: android版本分布/ios版本分布
+    """
+    res = getVersionDistribDaily(v.CLIENT_VERSION_DIS, subtype)
+    version = res[0][0]
+    count = res[0][1]
+    return version, count
+
+
+def getSpecVersionKernelCrashAveDaily(dut, version, subtype, **kwargs):
+    """
+    :param name: "R1CM-0.5.8"/"app-2.2.2/ios-2.2.2"
+    :param subtype: "CrashLog用户数"
+
+    :param name: "R1CM-kernel-0.5.8"/"app-2.2.2/ios-2.2.2"
+    :param subtype: "CrashLog次数"
+    """
+    option = {
+        "type": v.CRASH_VERSION_DIS,
+        "subtype": subtype,
+        "start": v.START,
+        "end": v.END
+    }
+    name = ""
+    if subtype == "CrashLog用户数":
+        name = dut + "-" + version
+    elif subtype == "CrashLog次数":
+        name = dut + "-kernel-" + version
+    option.update(kwargs)
+    res = getApi(**option)
+    return getAveCount1ForSpecName(res, name)
+
+
+def getSpecVersionDaemonCrashDaily(dut, version, **kwargs):
+    """
+    :param subtype: R1D/R2D/R3/R1CM
+    :param latestversion: 最新稳定版/开发版
+    :param kwargs:
+    :return:
+    """
+    option = {
+        "type": v.CRASH_VERSION_DAEMON_DIS,
+        "subtype": dut,
+        "start": v.END,
+        "end": v.END
+    }
+    option.update(kwargs)
+    res = getApi(**option)
+    daemonVersionCount1Dict = {}
+    daemonVersionCount2Dict = {}
+    if res.get('status') is 1:
+        for r in res.get('result'):
+            if r.get('name').find(version) is not -1:
+                daemonVersionCount1Dict.update({r.get('name'): int(r.get('count1'))})
+                crashUser = sorted(daemonVersionCount1Dict.iteritems(), key=lambda x: x[1], reverse=True)
+                daemonVersionCount2Dict.update({r.get('name'): int(r.get('count2'))})
+                crashCount = sorted(daemonVersionCount2Dict.iteritems(), key=lambda x: x[1], reverse=True)
+        return crashUser, crashCount
+
+
+def getSpecVersionDailyActive(dut, version):
+    command = {
+        "R1CM": "getVersionDistribDaily(v.R1CM_VERSION_DIS, '全部活跃用户版本分布')",
+        "R1D": "getVersionDistribDaily(v.R1D_VERSION_DIS, '全部活跃用户版本分布')",
+        "R2D": "getVersionDistribDaily(v.R2D_VERSION_DIS, '全部活跃用户版本分布')",
+        "R1CL": "getVersionDistribDaily(v.R1CL_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3": "getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3L": "getVersionDistribDaily(v.R3L_VERSION_DIS, '全部活跃用户版本统计')",
+    }
+    res = eval(command.get(dut))
+    # version = version.split('.')
+    # number = int(version[0]) * 1000 * 1000 + int(version[1]) * 1000 + int(version[2])
+    if len(res) is not 0:
+        for r in res:
+            if r[0].find(version) is not -1:
+                return int(r[1])
+
+
+def getSpecVersionAveDailyActive(dut, version):
+    option = {
+        "start": v.START,
+        "end": v.END
+    }
+    command = {
+        "R1CM": "getVersionDistribDaily(v.R1CM_VERSION_DIS, '全部活跃用户版本分布', **option)",
+        "R1D": "getVersionDistribDaily(v.R1D_VERSION_DIS, '全部活跃用户版本分布', **option)",
+        "R2D": "getVersionDistribDaily(v.R2D_VERSION_DIS, '全部活跃用户版本分布', **option)",
+        "R1CL": "getVersionDistribDaily(v.R1CL_VERSION_DIS, '全部活跃用户版本统计', **option)",
+        "R3": "getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计', **option)",
+        "R3L": "getVersionDistribDaily(v.R3L_VERSION_DIS, '全部活跃用户版本统计', **option)",
+    }
+    res = eval(command.get(dut))
+    countList = []
+    if len(res) is not 0:
+        for r in res:
+            if r[0].find(version) is not -1:
+                countList.append(int(r[1]))
+        if len(countList) is not 0:
+            countAve = reduce(lambda x, y: x + y, countList)/float(len(countList))
+            return int(round(countAve))
 
 
 if __name__ == '__main__':
-    # print getAveDailyActive("rom", **{"type": v.R1CM})
-    # print getAveDailyActive("rom", **{"type": v.R1D})
-    # print getAveDailyActive("rom", **{"type": v.R2D})
-    # print getAveDailyActive("rom", **{"type": v.R1CL})
-    # print getAveDailyActive("rom", **{"type": v.R3})
-    # print getAveDailyActive("rom", **{"type": v.R3L})
-    # print getAveClientAPPDailyActive("android")
-    # print getAveClientAPPDailyActive("ios")
-    # print getAveClientAPPDailyActive("mac")
+    # print getAveDailyActive(v.R1CM)
+    # print getAveDailyActive(v.R1D)
+    # print getAveDailyActive(v.R2D)
+    # print getAveDailyActive(v.R1CL)
+    # print getAveDailyActive(v.R3)
+    # print getAveDailyActive(v.R3L)
+    # print getClientAPPAveDailyActive("android")
+    # print getClientAPPAveDailyActive("ios")
+    # print getClientAPPAveDailyActive("mac")
 
-    # print getAveCrashDaily("R1CM-kernel", "CrashLog次数")
-    # print getAveCrashDaily("R1D-kernel", "CrashLog次数")
-    # print getAveCrashDaily("R2D-kernel", "CrashLog次数")
-    # print getAveCrashDaily("R1CL-kernel", "CrashLog次数")
-    # print getAveCrashDaily("R3-kernel", "CrashLog次数")
-    # print getAveCrashDaily("R3L-kernel", "CrashLog次数")
-    # print getAveCrashDaily("app-kernel", "CrashLog次数")
-    # print getAveCrashDaily("ios-kernel", "CrashLog次数")
-    # print getAveCrashDaily("R1CM-kernel", "CrashLog用户数")
-    # print getAveCrashDaily("R1D-kernel", "CrashLog用户数")
-    # print getAveCrashDaily("R2D-kernel", "CrashLog用户数")
-    # print getAveCrashDaily("R1CL-kernel", "CrashLog用户数")
-    # print getAveCrashDaily("R3-kernel", "CrashLog用户数")
-    # print getAveCrashDaily("R3L-kernel", "CrashLog用户数")
-    # print getAveCrashDaily("app-kernel", "CrashLog用户数")
-    # print getAveCrashDaily("ios-kernel", "CrashLog用户数")
+    # print getCrashAveDaily("R1CM-kernel", "CrashLog次数")
+    # print getCrashAveDaily("R1D-kernel", "CrashLog次数")
+    # print getCrashAveDaily("R2D-kernel", "CrashLog次数")
+    # print getCrashAveDaily("R1CL-kernel", "CrashLog次数")
+    # print getCrashAveDaily("R3-kernel", "CrashLog次数")
+    # print getCrashAveDaily("R3L-kernel", "CrashLog次数")
+    # print getCrashAveDaily("app-kernel", "CrashLog次数")
+    # print getCrashAveDaily("ios-kernel", "CrashLog次数")
+    # print getCrashAveDaily("R1CM-kernel", "CrashLog用户数")
+    # print getCrashAveDaily("R1D-kernel", "CrashLog用户数")
+    # print getCrashAveDaily("R2D-kernel", "CrashLog用户数")
+    # print getCrashAveDaily("R1CL-kernel", "CrashLog用户数")
+    # print getCrashAveDaily("R3-kernel", "CrashLog用户数")
+    # print getCrashAveDaily("R3L-kernel", "CrashLog用户数")
+    # print getCrashAveDaily("app-kernel", "CrashLog用户数")
+    # print getCrashAveDaily("ios-kernel", "CrashLog用户数")
 
-    print getAveCrashDaily("R1CM-app", "CrashLog次数")
-    print getAveCrashDaily("R1D-app", "CrashLog次数")
-    print getAveCrashDaily("R2D-app", "CrashLog次数")
-    print getAveCrashDaily("R3-app", "CrashLog次数")
-    print getAveCrashDaily("R1CM-app", "CrashLog用户数")
-    print getAveCrashDaily("R1D-app", "CrashLog用户数")
-    print getAveCrashDaily("R2D-app", "CrashLog用户数")
-    print getAveCrashDaily("R3-app", "CrashLog用户数")
+    # print getCrashAveDaily("R1CM-app", "CrashLog次数")
+    # print getCrashAveDaily("R1D-app", "CrashLog次数")
+    # print getCrashAveDaily("R2D-app", "CrashLog次数")
+    # print getCrashAveDaily("R3-app", "CrashLog次数")
+    # print getCrashAveDaily("R1CM-app", "CrashLog用户数")
+    # print getCrashAveDaily("R1D-app", "CrashLog用户数")
+    # print getCrashAveDaily("R2D-app", "CrashLog用户数")
+    # print getCrashAveDaily("R3-app", "CrashLog用户数")
+
+    # version, count = getVersionMostUsedDaily("R1CM")
+    # print version, count
+    # print getSpecVersionKernelCrashAveDaily(dut="R1CM", version=version, subtype="CrashLog次数")
+    # print getSpecVersionKernelCrashAveDaily(dut="R1CM", version=version, subtype="CrashLog用户数")
+
+    # print getVersionMostUsedDailyActive("R1D")
+    # print getVersionMostUsedDailyActive("R2D")
+    # print getVersionMostUsedDailyActive("R1CM")
+    # print getVersionMostUsedDailyActive("R1CL")
+    # print getVersionMostUsedDailyActive("R3")
+    # print getVersionMostUsedDailyActive("R3L")
+
+    # version, count = getClientAPPVersionMostUsedDaily("android版本分布")
+    # version2, count2 = getClientAPPVersionMostUsedDaily("ios版本分布")
+    # print version, count
+    # print version2, count2
+    # print getSpecVersionKernelCrashAveDaily(dut="app", version=version, subtype="CrashLog次数")
+    # print getSpecVersionKernelCrashAveDaily(dut="app", version=version, subtype="CrashLog用户数")
+    # print getSpecVersionKernelCrashAveDaily(dut="ios", version=version2, subtype="CrashLog次数")
+    # print getSpecVersionKernelCrashAveDaily(dut="ios", version=version2, subtype="CrashLog用户数")
+    # user, count = getSpecVersionDaemonCrashDaily("R1CM", "2.12.3")
+    # print  user , "\n", count
+
+    print getSpecVersionDailyActive("R1CM", "2.12.3")
+    print getSpecVersionAveDailyActive("R1CM", "2.12.3")
