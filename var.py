@@ -3,7 +3,7 @@ __author__ = 'Jac'
 
 URL = 'http://tongji.d.pt.xiaomi.com/api/datas'
 
-START = "2016-9-22"
+START = "2016-9-23"
 END = "2016-9-29"
 
 # type code
@@ -28,3 +28,8 @@ CRASH_VERSION_DAEMON_DIS = 833
 
 LATEST_RELEASE = "2.12.2"
 LATEST_STABLE = "2.11.80"
+
+FILE_NAME = "质量数据.xlsx".decode("utf8").encode("gbk")
+SHEET1 = "overall"
+SHEET2 = "spec version"
+SHEET3 = "spec version top10"
