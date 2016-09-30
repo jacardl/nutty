@@ -26,9 +26,6 @@ CLIENT_VERSION_DIS = 375
 CRASH_VERSION_DIS = 498
 CRASH_VERSION_DAEMON_DIS = 833
 
-LATEST_RELEASE = "2.12.2"
-LATEST_STABLE = "2.11.80"
-
 FILE_NAME = "质量数据.xlsx".decode("utf8").encode("gbk")
 SHEET1 = "overall"
 SHEET2 = "spec version"

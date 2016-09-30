@@ -313,8 +313,8 @@ def getSpecVersionAveDailyActive(dut, version):
 
 
 def getSpecVersionDaemonCrashUserCountTop10Daily(dut, version):
-    user, _ = getSpecVersionDaemonCrashDaily(dut, version)
-    return user[0:10]
+    userCount, _ = getSpecVersionDaemonCrashDaily(dut, version)
+    return userCount[0:10]
 
 if __name__ == '__main__':
     # print getAveDailyActive("R1CM")
@@ -365,10 +365,10 @@ if __name__ == '__main__':
     # print getVersionMostUsedDailyActive("R3")
     # print getVersionMostUsedDailyActive("R3L")
 
-    version, count = getClientAPPVersionMostUsedDaily("Android")
-    version2, count2 = getClientAPPVersionMostUsedDaily("iOS")
-    print version, count
-    print version2, count2
+    # version, count = getClientAPPVersionMostUsedDaily("Android")
+    # version2, count2 = getClientAPPVersionMostUsedDaily("iOS")
+    # print version, count
+    # print version2, count2
     # print getSpecVersionKernelCrashAveDaily(dut="app", version=version, subtype="CrashLog次数")
     # print getSpecVersionKernelCrashAveDaily(dut="app", version=version, subtype="CrashLog用户数")
     # print getSpecVersionKernelCrashAveDaily(dut="ios", version=version2, subtype="CrashLog次数")
@@ -378,5 +378,5 @@ if __name__ == '__main__':
 
     # print getSpecVersionDailyActive("R1CM", "2.12.3")
     # print getSpecVersionAveDailyActive("R1CM", "2.12.3")
-    # print getSpecVersionDaemonCrashUserCountTop10Daily("R1CM", "2.12.3")
+    print getSpecVersionDaemonCrashUserCountTop10Daily("R1CM", "2.12.3")
 

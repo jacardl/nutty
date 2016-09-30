@@ -76,8 +76,28 @@ def processSheet2Xlsx():
 
 
 def processSheet3Xlsx():
-
+    DUT = ["R1CM", "R1D", "R2D", "R3"]
+    try:
+        wb = load_workbook(v.FILE_NAME)
+    except:
+        print "specific file is not exist"
+        return
+    for dut in DUT:
+        for cell in wb[v.SHEET3].get_cell_collection():
+            if cell.value == dut:
+                dutX = cell.row
+                dutY = column_index_from_string(cell.column)
+                break
+        specVersion, dailyActive = getVersionMostUsedDailyActive(dut)
+        crashTop10 = getSpecVersionDaemonCrashUserCountTop10Daily(dut, specVersion)
+        for daemon in crashTop10:
+            dutX = dutX + 1
+            wb[v.SHEET3].cell(row=dutX, column=dutY).value = daemon[0] # 2.12.3-trafficd|11
+            wb[v.SHEET3].cell(row=dutX, column=dutY+1).value = daemon[1] # count
+            wb[v.SHEET3].cell(row=dutX, column=dutY+2).value = round(daemon[1]/dailyActive, 5)
+    wb.save(v.FILE_NAME)
 
 if __name__ == '__main__':
     # processSheet1Xlsx()
-    processSheet2Xlsx()
+    # processSheet2Xlsx()
+    processSheet3Xlsx()
