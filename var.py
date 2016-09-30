@@ -3,8 +3,8 @@ __author__ = 'Jac'
 
 URL = 'http://tongji.d.pt.xiaomi.com/api/datas'
 
-START = "2016-9-23"
-END = "2016-9-29"
+START = "2016-9-24"
+END = "2016-9-30"
 
 # type code
 R1D = 241
