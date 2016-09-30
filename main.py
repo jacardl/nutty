@@ -98,6 +98,6 @@ def processSheet3Xlsx():
     wb.save(v.FILE_NAME)
 
 if __name__ == '__main__':
-    # processSheet1Xlsx()
-    # processSheet2Xlsx()
+    processSheet1Xlsx()
+    processSheet2Xlsx()
     processSheet3Xlsx()
