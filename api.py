@@ -84,6 +84,7 @@ def getAveDailyActive(dut, **kwargs):
     }
     option.update(kwargs)
     res = getApi(**option)
+    print res
     return getAveCount1ForSpecName(res, "rom")
 
 
@@ -146,7 +147,7 @@ def getVersionDistribDaily(type, subtype):
     """
     {"status":1,"result":[{"count1":"2","count2":"0","date":"2016-09-21 00:00:00.0","name":"2.15.3","subtype":"活跃用户版本分布","type":338}
     subtype: 全部活跃用户版本分布(R1D/R2D/R1CM)/全部活跃用户版本统计(R1CL/R3/R3L)/版本分布/android版本分布/ios版本分布
-    type: v.R1CM_VERSION_DIS/v.R1D_VERSION_DIS...
+    type: v.R1CM_VERSION_DIS/v.R1D_VERSION_DIS/v.CLIENT_VERSION_DIS...
     """
     option = {
         "type": type,
@@ -159,15 +160,18 @@ def getVersionDistribDaily(type, subtype):
     if res.get("status") is 1:
         for r in res.get("result"):
             versionDict.update({r.get("name"): int(r.get("count1"))})
-        versionDict = sorted(versionDict.iteritems(), key=lambda x: x[1], reverse=True)
-        return versionDict
+        if len(versionDict) is 0:
+            print "%s, %s version distrib %s is not ready" % (v.END, type, subtype)
+        else:
+            versionDict = sorted(versionDict.iteritems(), key=lambda x: x[1], reverse=True)
+            return versionDict
 
 
 def getVersionDistribAveDaily(type, subtype, **kwargs):
     """
     {"status":1,"result":[{"count1":"2","count2":"0","date":"2016-09-21 00:00:00.0","name":"2.15.3","subtype":"活跃用户版本分布","type":338}
     subtype: 全部活跃用户版本分布(R1D/R2D/R1CM)/全部活跃用户版本统计(R1CL/R3/R3L)/版本分布/android版本分布/ios版本分布
-    type: v.R1CM_VERSION_DIS/v.R1D_VERSION_DIS...
+    type: v.R1CM_VERSION_DIS/v.R1D_VERSION_DIS/v.CLIENT_VERSION_DIS...
     """
     option = {
         "type": type,
@@ -222,6 +226,20 @@ def getClientAPPVersionMostUsedDaily(dut):
     return version, count
 
 
+def getClientAPPSpecVersionAveDailyActive(dut, version):
+    command = {
+        "android": "getVersionDistribAveDaily(v.CLIENT_VERSION_DIS, 'android版本分布')",
+        "ios": "getVersionDistribAveDaily(v.CLIENT_VERSION_DIS, 'ios版本分布')",
+    }
+    dut = dut.lower()
+    res = eval(command.get(dut))
+    if len(res) is not 0:
+        for r in res:
+            if r[0].find(version) is not -1:
+                return int(r[1])
+        return 0
+
+
 def getSpecVersionKernelCrashAveDaily(dut, version, subtype, **kwargs):
     """
     :param name: "R1CM-0.5.8"/"app-2.2.2/ios-2.2.2"
@@ -264,16 +282,19 @@ def getSpecVersionDaemonCrashDaily(dut, version, **kwargs):
     }
     option.update(kwargs)
     res = getApi(**option)
-    daemonVersionCount1Dict = {}
-    daemonVersionCount2Dict = {}
-    if res.get('status') is 1:
-        for r in res.get('result'):
-            if r.get('name').find(version) is not -1:
-                daemonVersionCount1Dict.update({r.get('name'): int(r.get('count1'))})
-                crashUser = sorted(daemonVersionCount1Dict.iteritems(), key=lambda x: x[1], reverse=True)
-                daemonVersionCount2Dict.update({r.get('name'): int(r.get('count2'))})
-                crashCount = sorted(daemonVersionCount2Dict.iteritems(), key=lambda x: x[1], reverse=True)
-        return crashUser, crashCount
+    if len(res.get("result")) is 0:
+        print "%s, %s daemon crash disbrib is not ready" % (v.END, dut)
+    else:
+        daemonVersionCount1Dict = {}
+        daemonVersionCount2Dict = {}
+        if res.get('status') is 1:
+            for r in res.get('result'):
+                if r.get('name').find(version) is not -1:
+                    daemonVersionCount1Dict.update({r.get('name'): int(r.get('count1'))})
+                    crashUserTuple = sorted(daemonVersionCount1Dict.iteritems(), key=lambda x: x[1], reverse=True)
+                    daemonVersionCount2Dict.update({r.get('name'): int(r.get('count2'))})
+                    crashCountTuple = sorted(daemonVersionCount2Dict.iteritems(), key=lambda x: x[1], reverse=True)
+            return crashUserTuple, crashCountTuple
 
 
 def getSpecVersionDailyActive(dut, version):
@@ -373,10 +394,12 @@ if __name__ == '__main__':
     # print getSpecVersionKernelCrashAveDaily(dut="app", version=version, subtype="CrashLog用户数")
     # print getSpecVersionKernelCrashAveDaily(dut="ios", version=version2, subtype="CrashLog次数")
     # print getSpecVersionKernelCrashAveDaily(dut="ios", version=version2, subtype="CrashLog用户数")
-    # user, count = getSpecVersionDaemonCrashDaily("R1CM", "2.12.3")
-    # print  user , "\n", count
+    user, count = getSpecVersionDaemonCrashDaily("R1CM", "2.12.3")
+    print  user , "\n", count
 
     # print getSpecVersionDailyActive("R1CM", "2.12.3")
     # print getSpecVersionAveDailyActive("R1CM", "2.12.3")
-    print getSpecVersionDaemonCrashUserCountTop10Daily("R1CM", "2.12.3")
+    # print getSpecVersionDaemonCrashUserCountTop10Daily("R1CM", "2.12.3")
+    # print getClientAPPSpecVersionAveDailyActive("Android", "2.2.31")
+    # print getClientAPPSpecVersionAveDailyActive("iOS", "2.12.2")
 

@@ -60,11 +60,14 @@ def processSheet2Xlsx():
                 _ = column_index_from_string(cell.column)
                 break
         if dut == DUT[-1] or dut == DUT[-2]:
-            specVersion, dailyActive = getClientAPPVersionMostUsedDaily(dut)
+            specVersion, _ = getClientAPPVersionMostUsedDaily(dut)
+            dailyActive = getClientAPPSpecVersionAveDailyActive(dut, specVersion)
         else:
-            specVersion, dailyActive = getVersionMostUsedDailyActive(dut)
+            specVersion, _ = getVersionMostUsedDailyActive(dut)
+            dailyActive = getSpecVersionAveDailyActive(dut, specVersion)
         crashCount = getSpecVersionKernelCrashAveDaily(dut, specVersion, SUBTYPE[0])
         crashUser = getSpecVersionKernelCrashAveDaily(dut, specVersion, SUBTYPE[1])
+
         stab = round(1-crashUser/dailyActive, 5)
 
         wb[v.SHEET2].cell(row=dutX, column=newY).value = specVersion
