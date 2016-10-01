@@ -30,6 +30,7 @@ def getAveCount1ForSpecName(data, name):
         for r in data.get("result"):
             if r.get("name") == name:
                 count = r.get("count1")
+                print r.get('date')
                 if count.isdigit():
                     countList.append(int(count))
         if len(countList) is not 0:
@@ -84,7 +85,6 @@ def getAveDailyActive(dut, **kwargs):
     }
     option.update(kwargs)
     res = getApi(**option)
-    print res
     return getAveCount1ForSpecName(res, "rom")
 
 
@@ -338,7 +338,7 @@ def getSpecVersionDaemonCrashUserCountTop10Daily(dut, version):
     return userCount[0:10]
 
 if __name__ == '__main__':
-    # print getAveDailyActive("R1CM")
+    print getAveDailyActive("R1CM")
     # print getAveDailyActive("R1D")
     # print getAveDailyActive("R2D")
     # print getAveDailyActive("R1CL")
@@ -394,8 +394,8 @@ if __name__ == '__main__':
     # print getSpecVersionKernelCrashAveDaily(dut="app", version=version, subtype="CrashLog用户数")
     # print getSpecVersionKernelCrashAveDaily(dut="ios", version=version2, subtype="CrashLog次数")
     # print getSpecVersionKernelCrashAveDaily(dut="ios", version=version2, subtype="CrashLog用户数")
-    user, count = getSpecVersionDaemonCrashDaily("R1CM", "2.12.3")
-    print  user , "\n", count
+    # user, count = getSpecVersionDaemonCrashDaily("R1CM", "2.12.3")
+    # print  user , "\n", count
 
     # print getSpecVersionDailyActive("R1CM", "2.12.3")
     # print getSpecVersionAveDailyActive("R1CM", "2.12.3")
