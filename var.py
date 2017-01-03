@@ -1,10 +1,12 @@
 #coding=utf8
-__author__ = 'Jac'
+__author__ = 'Jacard'
 
 URL = 'http://tongji.d.pt.xiaomi.com/api/datas'
 
-START = "2016-9-24"
-END = "2016-9-30"
+START = "2016-12-24"
+END = "2016-12-30"
+
+# after END + 1 day 11:30, results will come out
 
 # type code
 R1D = 241
