@@ -8,6 +8,9 @@ END = "2016-12-30"
 
 # after END + 1 day 11:30, results will come out
 
+DUT = ["R1CM", "R1D", "R2D", "R1CL", "R3", "R3L", "Android", "iOS"]  #支持监控整机kernel的产品
+DUT_SUPPORT_DAEMON = ["R1CM", "R1D", "R2D", "R3"] #支持监控daemon的产品
+
 # type code
 R1D = 241
 R2D = 559
@@ -30,5 +33,7 @@ CRASH_VERSION_DAEMON_DIS = 833
 
 FILE_NAME = "质量数据.xlsx".decode("utf8").encode("gbk")
 SHEET1 = "overall"
-SHEET2 = "spec version"
+SHEET2 = "spec version 1"
 SHEET3 = "spec version top10"
+SHEET4 = "spec version 2"
+SHEET5 = "spec version 3"

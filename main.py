@@ -7,7 +7,7 @@ from api import *
 import var as v
 
 def processSheet1Xlsx():
-    DUT = ["R1CM", "R1D", "R2D", "R1CL", "R3", "R3L", "Android", "iOS"]
+    DUT = v.DUT
     SUBTYPE = ["CrashLog次数", "CrashLog用户数"]
     try:
         wb = load_workbook(v.FILE_NAME)
@@ -41,7 +41,7 @@ def processSheet1Xlsx():
 
 
 def processSheet2Xlsx():
-    DUT = ["R1CM", "R1D", "R2D", "R1CL", "R3", "R3L", "Android", "iOS"]
+    DUT = v.DUT
     SUBTYPE = ["CrashLog次数", "CrashLog用户数"]
     try:
         wb = load_workbook(v.FILE_NAME)
@@ -79,7 +79,7 @@ def processSheet2Xlsx():
 
 
 def processSheet3Xlsx():
-    DUT = ["R1CM", "R1D", "R2D", "R3"]
+    DUT = v.DUT_SUPPORT_DAEMON
     try:
         wb = load_workbook(v.FILE_NAME)
     except:
@@ -100,7 +100,86 @@ def processSheet3Xlsx():
             wb[v.SHEET3].cell(row=dutX, column=dutY+2).value = round(daemon[1]/dailyActive, 5)
     wb.save(v.FILE_NAME)
 
+
+def processSheet4Xlsx():
+    DUT = v.DUT
+    SUBTYPE = ["CrashLog次数", "CrashLog用户数"]
+    try:
+        wb = load_workbook(v.FILE_NAME)
+    except:
+        print "specific file is not exist"
+        return
+    for cell in wb[v.SHEET4].get_cell_collection():
+        if cell.value == "new":
+            _ = cell.row
+            newY = column_index_from_string(cell.column)
+            break
+    for dut in DUT:
+        for cell in wb[v.SHEET4].get_cell_collection():
+            if cell.value == dut:
+                dutX = cell.row
+                _ = column_index_from_string(cell.column)
+                break
+        if dut == DUT[-1] or dut == DUT[-2]:
+            specVersion, _ = getClientAPPVersionSecondMostUsedDaily(dut)
+            dailyActive = getClientAPPSpecVersionAveDailyActive(dut, specVersion)
+        else:
+            specVersion, _ = getVersionSecondMostUsedDailyActive(dut)
+            dailyActive = getSpecVersionAveDailyActive(dut, specVersion)
+        crashCount = getSpecVersionKernelCrashAveDaily(dut, specVersion, SUBTYPE[0])
+        crashUser = getSpecVersionKernelCrashAveDaily(dut, specVersion, SUBTYPE[1])
+
+        stab = round(1-crashUser/dailyActive, 5)
+
+        wb[v.SHEET4].cell(row=dutX, column=newY).value = specVersion
+        wb[v.SHEET4].cell(row=dutX+1, column=newY).value = crashCount
+        wb[v.SHEET4].cell(row=dutX+2, column=newY).value = crashUser
+        wb[v.SHEET4].cell(row=dutX+3, column=newY).value = dailyActive
+        wb[v.SHEET4].cell(row=dutX+4, column=newY).value = stab
+    wb.save(v.FILE_NAME)
+
+
+def processSheet5Xlsx():
+    DUT = v.DUT
+    SUBTYPE = ["CrashLog次数", "CrashLog用户数"]
+    try:
+        wb = load_workbook(v.FILE_NAME)
+    except:
+        print "specific file is not exist"
+        return
+    for cell in wb[v.SHEET5].get_cell_collection():
+        if cell.value == "new":
+            _ = cell.row
+            newY = column_index_from_string(cell.column)
+            break
+    for dut in DUT:
+        for cell in wb[v.SHEET5].get_cell_collection():
+            if cell.value == dut:
+                dutX = cell.row
+                _ = column_index_from_string(cell.column)
+                break
+        if dut == DUT[-1] or dut == DUT[-2]:
+            specVersion, _ = getClientAPPVersionThirdMostUsedDaily(dut)
+            dailyActive = getClientAPPSpecVersionAveDailyActive(dut, specVersion)
+        else:
+            specVersion, _ = getVersionThirdMostUsedDailyActive(dut)
+            dailyActive = getSpecVersionAveDailyActive(dut, specVersion)
+        crashCount = getSpecVersionKernelCrashAveDaily(dut, specVersion, SUBTYPE[0])
+        crashUser = getSpecVersionKernelCrashAveDaily(dut, specVersion, SUBTYPE[1])
+
+        stab = round(1-crashUser/dailyActive, 5)
+
+        wb[v.SHEET5].cell(row=dutX, column=newY).value = specVersion
+        wb[v.SHEET5].cell(row=dutX+1, column=newY).value = crashCount
+        wb[v.SHEET5].cell(row=dutX+2, column=newY).value = crashUser
+        wb[v.SHEET5].cell(row=dutX+3, column=newY).value = dailyActive
+        wb[v.SHEET5].cell(row=dutX+4, column=newY).value = stab
+    wb.save(v.FILE_NAME)
+
+
 if __name__ == '__main__':
     processSheet1Xlsx()
     processSheet2Xlsx()
     processSheet3Xlsx()
+    processSheet4Xlsx()
+    processSheet5Xlsx()

@@ -215,6 +215,42 @@ def getVersionMostUsedDailyActive(dut):
     return version, count
 
 
+def getVersionSecondMostUsedDailyActive(dut):
+    """
+    :param type: v.R1CM_VERSION_DIS/v.R1D_VERSION_DIS/v.R2d_VERSION_DIS...
+    """
+    command = {
+        "R1CM": "getVersionDistribDaily(v.R1CM_VERSION_DIS, '全部活跃用户版本分布')",
+        "R1D": "getVersionDistribDaily(v.R1D_VERSION_DIS, '全部活跃用户版本分布')",
+        "R2D": "getVersionDistribDaily(v.R2D_VERSION_DIS, '全部活跃用户版本分布')",
+        "R1CL": "getVersionDistribDaily(v.R1CL_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3": "getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3L": "getVersionDistribDaily(v.R3L_VERSION_DIS, '全部活跃用户版本统计')",
+    }
+    res = eval(command.get(dut))
+    version = res[1][0]
+    count = res[1][1]
+    return version, count
+
+
+def getVersionThirdMostUsedDailyActive(dut):
+    """
+    :param type: v.R1CM_VERSION_DIS/v.R1D_VERSION_DIS/v.R2d_VERSION_DIS...
+    """
+    command = {
+        "R1CM": "getVersionDistribDaily(v.R1CM_VERSION_DIS, '全部活跃用户版本分布')",
+        "R1D": "getVersionDistribDaily(v.R1D_VERSION_DIS, '全部活跃用户版本分布')",
+        "R2D": "getVersionDistribDaily(v.R2D_VERSION_DIS, '全部活跃用户版本分布')",
+        "R1CL": "getVersionDistribDaily(v.R1CL_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3": "getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3L": "getVersionDistribDaily(v.R3L_VERSION_DIS, '全部活跃用户版本统计')",
+    }
+    res = eval(command.get(dut))
+    version = res[2][0]
+    count = res[2][1]
+    return version, count
+
+
 def getClientAPPVersionMostUsedDaily(dut):
     """
     :param subtype: android版本分布/ios版本分布
@@ -223,6 +259,28 @@ def getClientAPPVersionMostUsedDaily(dut):
     res = getVersionDistribDaily(v.CLIENT_VERSION_DIS, subtype)
     version = res[0][0]
     count = res[0][1]
+    return version, count
+
+
+def getClientAPPVersionSecondMostUsedDaily(dut):
+    """
+    :param subtype: android版本分布/ios版本分布
+    """
+    subtype = dut.lower() + "版本分布"
+    res = getVersionDistribDaily(v.CLIENT_VERSION_DIS, subtype)
+    version = res[1][0]
+    count = res[1][1]
+    return version, count
+
+
+def getClientAPPVersionThirdMostUsedDaily(dut):
+    """
+    :param subtype: android版本分布/ios版本分布
+    """
+    subtype = dut.lower() + "版本分布"
+    res = getVersionDistribDaily(v.CLIENT_VERSION_DIS, subtype)
+    version = res[2][0]
+    count = res[2][1]
     return version, count
 
 
@@ -338,68 +396,4 @@ def getSpecVersionDaemonCrashUserCountTop10Daily(dut, version):
     return userCount[0:10]
 
 if __name__ == '__main__':
-    print getAveDailyActive("R1CM")
-    # print getAveDailyActive("R1D")
-    # print getAveDailyActive("R2D")
-    # print getAveDailyActive("R1CL")
-    # print getAveDailyActive("R3")
-    # print getAveDailyActive("R3L")
-    # print getClientAPPAveDailyActive("android")
-    # print getClientAPPAveDailyActive("ios")
-    # print getClientAPPAveDailyActive("mac")
-
-    # print getKernelCrashAveDaily("R1CM", "CrashLog次数")
-    # print getKernelCrashAveDaily("R1D", "CrashLog次数")
-    # print getKernelCrashAveDaily("R2D", "CrashLog次数")
-    # print getKernelCrashAveDaily("R1CL", "CrashLog次数")
-    # print getKernelCrashAveDaily("R3", "CrashLog次数")
-    # print getKernelCrashAveDaily("R3L", "CrashLog次数")
-    # print getKernelCrashAveDaily("app", "CrashLog次数")
-    # print getKernelCrashAveDaily("ios", "CrashLog次数")
-    # print getKernelCrashAveDaily("R1CM", "CrashLog用户数")
-    # print getKernelCrashAveDaily("R1D", "CrashLog用户数")
-    # print getKernelCrashAveDaily("R2D", "CrashLog用户数")
-    # print getKernelCrashAveDaily("R1CL", "CrashLog用户数")
-    # print getKernelCrashAveDaily("R3", "CrashLog用户数")
-    # print getKernelCrashAveDaily("R3L", "CrashLog用户数")
-    # print getKernelCrashAveDaily("app", "CrashLog用户数")
-    # print getKernelCrashAveDaily("ios", "CrashLog用户数")
-
-    # print getDaemonCrashAveDaily("R1CM", "CrashLog次数")
-    # print getDaemonCrashAveDaily("R1D", "CrashLog次数")
-    # print getDaemonCrashAveDaily("R2D", "CrashLog次数")
-    # print getDaemonCrashAveDaily("R3", "CrashLog次数")
-    # print getDaemonCrashAveDaily("R1CM", "CrashLog用户数")
-    # print getDaemonCrashAveDaily("R1D", "CrashLog用户数")
-    # print getDaemonCrashAveDaily("R2D", "CrashLog用户数")
-    # print getDaemonCrashAveDaily("R3", "CrashLog用户数")
-
-    # version, count = getVersionMostUsedDaily("R1CM")
-    # print version, count
-    # print getSpecVersionKernelCrashAveDaily(dut="R1CM", version=version, subtype="CrashLog次数")
-    # print getSpecVersionKernelCrashAveDaily(dut="R1CM", version=version, subtype="CrashLog用户数")
-
-    # print getVersionMostUsedDailyActive("R1D")
-    # print getVersionMostUsedDailyActive("R2D")
-    # print getVersionMostUsedDailyActive("R1CM")
-    # print getVersionMostUsedDailyActive("R1CL")
-    # print getVersionMostUsedDailyActive("R3")
-    # print getVersionMostUsedDailyActive("R3L")
-
-    # version, count = getClientAPPVersionMostUsedDaily("Android")
-    # version2, count2 = getClientAPPVersionMostUsedDaily("iOS")
-    # print version, count
-    # print version2, count2
-    # print getSpecVersionKernelCrashAveDaily(dut="app", version=version, subtype="CrashLog次数")
-    # print getSpecVersionKernelCrashAveDaily(dut="app", version=version, subtype="CrashLog用户数")
-    # print getSpecVersionKernelCrashAveDaily(dut="ios", version=version2, subtype="CrashLog次数")
-    # print getSpecVersionKernelCrashAveDaily(dut="ios", version=version2, subtype="CrashLog用户数")
-    # user, count = getSpecVersionDaemonCrashDaily("R1CM", "2.12.3")
-    # print  user , "\n", count
-
-    # print getSpecVersionDailyActive("R1CM", "2.12.3")
-    # print getSpecVersionAveDailyActive("R1CM", "2.12.3")
-    # print getSpecVersionDaemonCrashUserCountTop10Daily("R1CM", "2.12.3")
-    # print getClientAPPSpecVersionAveDailyActive("Android", "2.2.31")
-    # print getClientAPPSpecVersionAveDailyActive("iOS", "2.12.2")
-
+    print getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')
