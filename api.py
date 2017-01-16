@@ -251,6 +251,27 @@ def getVersionThirdMostUsedDailyActive(dut):
     return version, count
 
 
+def getVersionLatestStableUsedDailyActive(dut):
+    """
+    :param type: v.R1CM_VERSION_DIS/v.R1D_VERSION_DIS/v.R2d_VERSION_DIS...
+    """
+    command = {
+        "R1CM": "getVersionDistribDaily(v.R1CM_VERSION_DIS, '全部活跃用户版本分布')",
+        "R1D": "getVersionDistribDaily(v.R1D_VERSION_DIS, '全部活跃用户版本分布')",
+        "R2D": "getVersionDistribDaily(v.R2D_VERSION_DIS, '全部活跃用户版本分布')",
+        "R1CL": "getVersionDistribDaily(v.R1CL_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3": "getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3L": "getVersionDistribDaily(v.R3L_VERSION_DIS, '全部活跃用户版本统计')",
+    }
+    res = eval(command.get(dut))
+    for version, count in res:
+        versionSplit = version.split('.')
+        stableVersion1 = int(versionSplit[0])
+        stableVersion2 = int(versionSplit[1])
+        if stableVersion1 > 1 and stableVersion2 % 2 != 0 :
+            return version, count
+
+
 def getClientAPPVersionMostUsedDaily(dut):
     """
     :param subtype: android版本分布/ios版本分布
@@ -282,6 +303,20 @@ def getClientAPPVersionThirdMostUsedDaily(dut):
     version = res[2][0]
     count = res[2][1]
     return version, count
+
+
+def getClientAPPVersionLatestStable(dut):
+    """
+    :param subtype: android版本分布/ios版本分布
+    """
+    subtype = dut.lower() + "版本分布"
+    res = getVersionDistribDaily(v.CLIENT_VERSION_DIS, subtype)
+    for version, count in res:
+        versionSplit = version.split('.')
+        stableVersion1 = int(versionSplit[0])
+        stableVersion2 = int(versionSplit[1])
+        if stableVersion1 > 1 and stableVersion2 % 2 != 0 :
+            return version, count
 
 
 def getClientAPPSpecVersionAveDailyActive(dut, version):
@@ -396,4 +431,6 @@ def getSpecVersionDaemonCrashUserCountTop10Daily(dut, version):
     return userCount[0:10]
 
 if __name__ == '__main__':
-    print getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')
+    # print getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')
+    # print getLatestStableUsedDailyActive("R1CL")
+    print getClientAPPVersionLatestStable("ios")

@@ -3,8 +3,8 @@ __author__ = 'Jacard'
 
 URL = 'http://tongji.d.pt.xiaomi.com/api/datas'
 
-START = "2016-12-24"
-END = "2016-12-30"
+START = "2017-01-07"
+END = "2017-01-13"
 
 # after END + 1 day 11:30, results will come out
 
@@ -33,7 +33,8 @@ CRASH_VERSION_DAEMON_DIS = 833
 
 FILE_NAME = "质量数据.xlsx".decode("utf8").encode("gbk")
 SHEET1 = "overall"
-SHEET2 = "spec version 1"
+SHEET2 = "most version"
 SHEET3 = "spec version top10"
-SHEET4 = "spec version 2"
-SHEET5 = "spec version 3"
+SHEET4 = "second most version"
+SHEET5 = "third most version"
+SHEET6 = "latest stable version"
