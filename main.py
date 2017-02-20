@@ -19,6 +19,11 @@ def processSheet1Xlsx():
             _ = cell.row
             newY = column_index_from_string(cell.column)
             break
+    try:
+        newY
+    except Exception,e:
+        print v.SHEET1 + " sheet does not contain new column"
+        return
     for dut in DUT:
         for cell in wb[v.SHEET1].get_cell_collection():
             if cell.value == dut:
@@ -53,6 +58,11 @@ def processSheet2Xlsx():
             _ = cell.row
             newY = column_index_from_string(cell.column)
             break
+    try:
+        newY
+    except Exception,e:
+        print v.SHEET2 + " sheet does not contain new column"
+        return
     for dut in DUT:
         for cell in wb[v.SHEET2].get_cell_collection():
             if cell.value == dut:
@@ -114,6 +124,11 @@ def processSheet4Xlsx():
             _ = cell.row
             newY = column_index_from_string(cell.column)
             break
+    try:
+        newY
+    except Exception,e:
+        print v.SHEET4 + " sheet does not contain new column"
+        return
     for dut in DUT:
         for cell in wb[v.SHEET4].get_cell_collection():
             if cell.value == dut:
@@ -139,42 +154,47 @@ def processSheet4Xlsx():
     wb.save(v.FILE_NAME)
 
 
-# def processSheet5Xlsx():
-#     DUT = v.DUT
-#     SUBTYPE = ["CrashLog次数", "CrashLog用户数"]
-#     try:
-#         wb = load_workbook(v.FILE_NAME)
-#     except:
-#         print "specific file is not exist"
-#         return
-#     for cell in wb[v.SHEET5].get_cell_collection():
-#         if cell.value == "new":
-#             _ = cell.row
-#             newY = column_index_from_string(cell.column)
-#             break
-#     for dut in DUT:
-#         for cell in wb[v.SHEET5].get_cell_collection():
-#             if cell.value == dut:
-#                 dutX = cell.row
-#                 _ = column_index_from_string(cell.column)
-#                 break
-#         if dut == DUT[-1] or dut == DUT[-2]:
-#             specVersion, _ = getClientAPPVersionThirdMostUsedDaily(dut)
-#             dailyActive = getClientAPPSpecVersionAveDailyActive(dut, specVersion)
-#         else:
-#             specVersion, _ = getVersionThirdMostUsedDailyActive(dut)
-#             dailyActive = getSpecVersionAveDailyActive(dut, specVersion)
-#         crashCount = getSpecVersionKernelCrashAveDaily(dut, specVersion, SUBTYPE[0])
-#         crashUser = getSpecVersionKernelCrashAveDaily(dut, specVersion, SUBTYPE[1])
-#
-#         stab = round(1-crashUser/dailyActive, 5)
-#
-#         wb[v.SHEET5].cell(row=dutX, column=newY).value = specVersion
-#         wb[v.SHEET5].cell(row=dutX+1, column=newY).value = crashCount
-#         wb[v.SHEET5].cell(row=dutX+2, column=newY).value = crashUser
-#         wb[v.SHEET5].cell(row=dutX+3, column=newY).value = dailyActive
-#         wb[v.SHEET5].cell(row=dutX+4, column=newY).value = stab
-#     wb.save(v.FILE_NAME)
+def processSheet5Xlsx():
+    DUT = v.DUT
+    SUBTYPE = ["CrashLog次数", "CrashLog用户数"]
+    try:
+        wb = load_workbook(v.FILE_NAME)
+    except:
+        print "specific file is not exist"
+        return
+    for cell in wb[v.SHEET5].get_cell_collection():
+        if cell.value == "new":
+            _ = cell.row
+            newY = column_index_from_string(cell.column)
+            break
+    try:
+        newY
+    except Exception,e:
+        print v.SHEET5 + " sheet does not contain new column"
+        return
+    for dut in DUT:
+        for cell in wb[v.SHEET5].get_cell_collection():
+            if cell.value == dut:
+                dutX = cell.row
+                _ = column_index_from_string(cell.column)
+                break
+        if dut == DUT[-1] or dut == DUT[-2]:
+            specVersion, _ = getClientAPPVersionThirdMostUsedDaily(dut)
+            dailyActive = getClientAPPSpecVersionAveDailyActive(dut, specVersion)
+        else:
+            specVersion, _ = getVersionThirdMostUsedDailyActive(dut)
+            dailyActive = getSpecVersionAveDailyActive(dut, specVersion)
+        crashCount = getSpecVersionKernelCrashAveDaily(dut, specVersion, SUBTYPE[0])
+        crashUser = getSpecVersionKernelCrashAveDaily(dut, specVersion, SUBTYPE[1])
+
+        stab = round(1-crashUser/dailyActive, 5)
+
+        wb[v.SHEET5].cell(row=dutX, column=newY).value = specVersion
+        wb[v.SHEET5].cell(row=dutX+1, column=newY).value = crashCount
+        wb[v.SHEET5].cell(row=dutX+2, column=newY).value = crashUser
+        wb[v.SHEET5].cell(row=dutX+3, column=newY).value = dailyActive
+        wb[v.SHEET5].cell(row=dutX+4, column=newY).value = stab
+    wb.save(v.FILE_NAME)
 
 
 def processSheet6Xlsx():
@@ -190,6 +210,11 @@ def processSheet6Xlsx():
             _ = cell.row
             newY = column_index_from_string(cell.column)
             break
+    try:
+        newY
+    except Exception,e:
+        print v.SHEET6 + " sheet does not contain new column"
+        return
     for dut in DUT:
         for cell in wb[v.SHEET6].get_cell_collection():
             if cell.value == dut:
@@ -215,10 +240,34 @@ def processSheet6Xlsx():
     wb.save(v.FILE_NAME)
 
 
+def processSheet7Xlsx():
+    DUT = v.DUT_SUPPORT_DAEMON
+    try:
+        wb = load_workbook(v.FILE_NAME)
+    except:
+        print "specific file is not exist"
+        return
+    for dut in DUT:
+        for cell in wb[v.SHEET7].get_cell_collection():
+            if cell.value == dut:
+                dutX = cell.row
+                dutY = column_index_from_string(cell.column)
+                break
+        specVersion, dailyActive = getVersionLatestStableUsedDailyActive(dut)
+        crashTop10 = getSpecVersionDaemonCrashUserCountTop10Daily(dut, specVersion)
+        for daemon in crashTop10:
+            dutX = dutX + 1
+            wb[v.SHEET7].cell(row=dutX, column=dutY).value = daemon[0] # 2.12.3-trafficd|11
+            wb[v.SHEET7].cell(row=dutX, column=dutY+1).value = daemon[1] # count
+            wb[v.SHEET7].cell(row=dutX, column=dutY+2).value = round(daemon[1]/dailyActive, 5)
+    wb.save(v.FILE_NAME)
+
+
 if __name__ == '__main__':
     processSheet1Xlsx()
     processSheet2Xlsx()
     processSheet3Xlsx()
     processSheet4Xlsx()
-    # processSheet5Xlsx()
+    processSheet5Xlsx()
     processSheet6Xlsx()
+    processSheet7Xlsx()
