@@ -5,6 +5,18 @@ import collections
 
 import var as v
 
+# 数据工厂 task
+# v-路由器-crash-app次数
+# v-路由器-crash-app用户数-版本分布
+# v-路由器-crash-app次数-版本分布
+# v-路由器-crash用户数-版本分布
+# v-路由器-crash次数-版本分布
+# v-路由器-crash次数
+# v-路由器-crash-app用户数
+# v-路由器-crash用户数
+
+# v_R3L-概况数据-周活跃
+
 
 def getApi(url=v.URL, **kwargs):
     s = requests.session()
