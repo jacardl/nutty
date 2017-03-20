@@ -408,7 +408,13 @@ def getSpecVersionDaemonCrashDaily(dut, version, **kwargs):
                     crashUserTuple = sorted(daemonVersionCount1Dict.iteritems(), key=lambda x: x[1], reverse=True)
                     daemonVersionCount2Dict.update({r.get('name'): int(r.get('count2'))})
                     crashCountTuple = sorted(daemonVersionCount2Dict.iteritems(), key=lambda x: x[1], reverse=True)
-            return crashUserTuple, crashCountTuple
+            try:
+                crashUserTuple
+                return crashUserTuple, crashCountTuple
+            except NameError:
+                print "%s do not have daemon crash" % (version)
+                return [("null", 0)], [("null", 0)]
+
 
 
 def getSpecVersionDailyActive(dut, version):
@@ -458,7 +464,7 @@ def getSpecVersionDaemonCrashUserCountTop10Daily(dut, version):
 if __name__ == '__main__':
     # print getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')
     # print getLatestStableUsedDailyActive("R1CL")
-    specVersion, dailyActive = getVersionMostUsedDailyActive("R3D")
-    print specVersion, dailyActive
+    # specVersion, dailyActive = getVersionMostUsedDailyActive("R3D")
+    specVersion, dailyActive = getVersionLatestStableUsedDailyActive("R3D")
     crashTop10 = getSpecVersionDaemonCrashUserCountTop10Daily("R3D", specVersion)
     print crashTop10
