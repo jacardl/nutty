@@ -458,4 +458,7 @@ def getSpecVersionDaemonCrashUserCountTop10Daily(dut, version):
 if __name__ == '__main__':
     # print getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')
     # print getLatestStableUsedDailyActive("R1CL")
-    print getClientAPPVersionLatestStable("ios")
+    specVersion, dailyActive = getVersionMostUsedDailyActive("R3D")
+    print specVersion, dailyActive
+    crashTop10 = getSpecVersionDaemonCrashUserCountTop10Daily("R3D", specVersion)
+    print crashTop10
