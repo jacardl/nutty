@@ -14,8 +14,7 @@ import var as v
 # v-路由器-crash次数
 # v-路由器-crash-app用户数
 # v-路由器-crash用户数
-
-# v_R3L-概况数据-周活跃
+# v_R3L-概况数据-日活跃
 
 
 def getApi(url=v.URL, **kwargs):
@@ -87,6 +86,8 @@ def getAveDailyActive(dut, **kwargs):
         "R1CL" : "v.R1CL",
         "R3" : "v.R3",
         "R3L" : "v.R3L",
+        "R3D" : "v.R3D",
+        "R3P" : "v.R3P",
     }
     type = eval(command.get(dut))
     option = {
@@ -220,6 +221,8 @@ def getVersionMostUsedDailyActive(dut):
         "R1CL": "getVersionDistribDaily(v.R1CL_VERSION_DIS, '全部活跃用户版本统计')",
         "R3": "getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')",
         "R3L": "getVersionDistribDaily(v.R3L_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3D": "getVersionDistribDaily(v.R3D_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3P": "getVersionDistribDaily(v.R3P_VERSION_DIS, '全部活跃用户版本统计')",
     }
     res = eval(command.get(dut))
     version = res[0][0]
@@ -238,6 +241,8 @@ def getVersionSecondMostUsedDailyActive(dut):
         "R1CL": "getVersionDistribDaily(v.R1CL_VERSION_DIS, '全部活跃用户版本统计')",
         "R3": "getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')",
         "R3L": "getVersionDistribDaily(v.R3L_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3D": "getVersionDistribDaily(v.R3D_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3P": "getVersionDistribDaily(v.R3P_VERSION_DIS, '全部活跃用户版本统计')",
     }
     res = eval(command.get(dut))
     version = res[1][0]
@@ -256,6 +261,8 @@ def getVersionThirdMostUsedDailyActive(dut):
         "R1CL": "getVersionDistribDaily(v.R1CL_VERSION_DIS, '全部活跃用户版本统计')",
         "R3": "getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')",
         "R3L": "getVersionDistribDaily(v.R3L_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3D": "getVersionDistribDaily(v.R3D_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3P": "getVersionDistribDaily(v.R3P_VERSION_DIS, '全部活跃用户版本统计')",
     }
     res = eval(command.get(dut))
     version = res[2][0]
@@ -274,6 +281,8 @@ def getVersionLatestStableUsedDailyActive(dut):
         "R1CL": "getVersionDistribDaily(v.R1CL_VERSION_DIS, '全部活跃用户版本统计')",
         "R3": "getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')",
         "R3L": "getVersionDistribDaily(v.R3L_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3D": "getVersionDistribDaily(v.R3D_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3P": "getVersionDistribDaily(v.R3P_VERSION_DIS, '全部活跃用户版本统计')",
     }
     res = eval(command.get(dut))
     for version, count in res:
@@ -410,6 +419,8 @@ def getSpecVersionDailyActive(dut, version):
         "R1CL": "getVersionDistribDaily(v.R1CL_VERSION_DIS, '全部活跃用户版本统计')",
         "R3": "getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')",
         "R3L": "getVersionDistribDaily(v.R3L_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3D": "getVersionDistribDaily(v.R3D_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3P": "getVersionDistribDaily(v.R3P_VERSION_DIS, '全部活跃用户版本统计')",
     }
     res = eval(command.get(dut))
     # version = version.split('.')
@@ -429,6 +440,8 @@ def getSpecVersionAveDailyActive(dut, version):
         "R1CL": "getVersionDistribAveDaily(v.R1CL_VERSION_DIS, '全部活跃用户版本统计')",
         "R3": "getVersionDistribAveDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')",
         "R3L": "getVersionDistribAveDaily(v.R3L_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3D": "getVersionDistribDaily(v.R3D_VERSION_DIS, '全部活跃用户版本统计')",
+        "R3P": "getVersionDistribDaily(v.R3P_VERSION_DIS, '全部活跃用户版本统计')",
     }
     res = eval(command.get(dut))
     if len(res) is not 0:
