@@ -31,8 +31,12 @@ def getApi(url=v.URL, **kwargs):
             }
     option.update(kwargs)
     res = s.get(url=v.URL, params=option, timeout=10)
+    dataDict = eval(res.content)
+    if len(dataDict.get("result")) is not 0:
+        return dataDict
+    else:
+        print str(kwargs.get("type")) + " " + kwargs.get("subtype") + " can not obtain data from server between "+ kwargs.get("start")+ " and " + kwargs.get("end")
     # resJson = json.dumps(res.content)
-    return eval(res.content)
 
 
 def getAveCount1ForSpecName(data, name):
@@ -41,7 +45,7 @@ def getAveCount1ForSpecName(data, name):
         for r in data.get("result"):
             if r.get("name") == name:
                 count = r.get("count1")
-                print r.get('date')
+                # print r.get('date')
                 if count.isdigit():
                     countList.append(int(count))
         if len(countList) is not 0:
@@ -67,11 +71,12 @@ def getDailyActive(type, **kwargs):
     }
     option.update(kwargs)
     res = getApi(**option)
-    if res.get("status") is 1:
-        for r in res.get("result"):
-            if r.get("name") == "rom":
-                return int(r.get("count1"))
-            return 0
+    if res is not None:
+        if res.get("status") is 1:
+            for r in res.get("result"):
+                if r.get("name") == "rom":
+                    return int(r.get("count1"))
+                return 0
 
 
 def getAveDailyActive(dut, **kwargs):
@@ -100,7 +105,8 @@ def getAveDailyActive(dut, **kwargs):
     }
     option.update(kwargs)
     res = getApi(**option)
-    return getAveCount1ForSpecName(res, "rom")
+    if res is not None:
+        return getAveCount1ForSpecName(res, "rom")
 
 
 def getClientAPPAveDailyActive(name, **kwargs):
@@ -116,8 +122,9 @@ def getClientAPPAveDailyActive(name, **kwargs):
     }
     option.update(kwargs)
     res = getApi(**option)
-    name = name.lower()
-    return getAveCount1ForSpecName(res, name)
+    if res is not None:
+        name = name.lower()
+        return getAveCount1ForSpecName(res, name)
 
 
 def getKernelCrashAveDaily(dut, subtype, **kwargs):
@@ -134,11 +141,12 @@ def getKernelCrashAveDaily(dut, subtype, **kwargs):
     }
     option.update(kwargs)
     res = getApi(**option)
-    if dut.lower() == "android":
-        dut = "app"
-    elif dut.lower() == "ios":
-        dut = "ios"
-    return getAveCount1ForSpecName(res, dut+'-kernel')
+    if res is not None:
+        if dut.lower() == "android":
+            dut = "app"
+        elif dut.lower() == "ios":
+            dut = "ios"
+        return getAveCount1ForSpecName(res, dut+'-kernel')
 
 
 def getDaemonCrashAveDaily(dut, subtype, **kwargs):
@@ -155,7 +163,8 @@ def getDaemonCrashAveDaily(dut, subtype, **kwargs):
     }
     option.update(kwargs)
     res = getApi(**option)
-    return getAveCount1ForSpecName(res, dut+'-app')
+    if res is not None:
+        return getAveCount1ForSpecName(res, dut+'-app')
 
 
 def getVersionDistribDaily(type, subtype):
@@ -171,15 +180,16 @@ def getVersionDistribDaily(type, subtype):
         "end": v.END
     }
     res = getApi(**option)
-    versionDict = {}
-    if res.get("status") is 1:
-        for r in res.get("result"):
-            versionDict.update({r.get("name"): int(r.get("count1"))})
-        if len(versionDict) is 0:
-            print "%s, %s version distrib %s is not ready" % (v.END, type, subtype)
-        else:
-            versionDict = sorted(versionDict.iteritems(), key=lambda x: x[1], reverse=True)
-            return versionDict
+    if res is not None:
+        versionDict = {}
+        if res.get("status") is 1:
+            for r in res.get("result"):
+                versionDict.update({r.get("name"): int(r.get("count1"))})
+            if len(versionDict) is 0:
+                print "%s, %s version distrib %s is not ready" % (v.END, type, subtype)
+            else:
+                versionDict = sorted(versionDict.iteritems(), key=lambda x: x[1], reverse=True)
+                return versionDict
 
 
 def getVersionDistribAveDaily(type, subtype, **kwargs):
@@ -196,20 +206,22 @@ def getVersionDistribAveDaily(type, subtype, **kwargs):
     }
     option.update(kwargs)
     res = getApi(**option)
-    versionDict = {}
-    if res.get("status") is 1:
-        for r in res.get("result"):
-            ver = r.get("name")
-            count = int(r.get("count1"))
-            if versionDict.get(ver) is not None:
-                versionDict.get(ver).append(count)
-            else:
-                versionDict.update({ver: [count]})
-        for x, y in versionDict.items():
-            countAve = reduce(lambda a, b: a + b, y)/float(len(y))
-            versionDict[x] = int(round(countAve))
-        versionDict = sorted(versionDict.iteritems(), key=lambda x: x[1], reverse=True)
-        return versionDict
+    if res is not None:
+        versionDict = {}
+        if res is not None:
+            if res.get("status") is 1:
+                for r in res.get("result"):
+                    ver = r.get("name")
+                    count = int(r.get("count1"))
+                    if versionDict.get(ver) is not None:
+                        versionDict.get(ver).append(count)
+                    else:
+                        versionDict.update({ver: [count]})
+                for x, y in versionDict.items():
+                    countAve = reduce(lambda a, b: a + b, y)/float(len(y))
+                    versionDict[x] = int(round(countAve))
+                versionDict = sorted(versionDict.iteritems(), key=lambda x: x[1], reverse=True)
+                return versionDict
 
 
 def getVersionMostUsedDailyActive(dut):
@@ -388,7 +400,8 @@ def getSpecVersionKernelCrashAveDaily(dut, version, subtype, **kwargs):
         name = dut + "-kernel-" + version
     option.update(kwargs)
     res = getApi(**option)
-    return getAveCount1ForSpecName(res, name)
+    if res is not None:
+        return getAveCount1ForSpecName(res, name)
 
 
 def getSpecVersionDaemonCrashDaily(dut, version, **kwargs):
@@ -406,24 +419,25 @@ def getSpecVersionDaemonCrashDaily(dut, version, **kwargs):
     }
     option.update(kwargs)
     res = getApi(**option)
-    if len(res.get("result")) is 0:
-        print "%s, %s daemon crash disbrib is not ready" % (v.END, dut)
-    else:
-        daemonVersionCount1Dict = {}
-        daemonVersionCount2Dict = {}
-        if res.get('status') is 1:
-            for r in res.get('result'):
-                if r.get('name').find(version) is not -1:
-                    daemonVersionCount1Dict.update({r.get('name'): int(r.get('count1'))})
-                    crashUserTuple = sorted(daemonVersionCount1Dict.iteritems(), key=lambda x: x[1], reverse=True)
-                    daemonVersionCount2Dict.update({r.get('name'): int(r.get('count2'))})
-                    crashCountTuple = sorted(daemonVersionCount2Dict.iteritems(), key=lambda x: x[1], reverse=True)
-            try:
-                crashUserTuple
-                return crashUserTuple, crashCountTuple
-            except NameError:
-                print "%s do not have daemon crash" % (version)
-                return [("null", 0)], [("null", 0)]
+    if res is not None:
+        if len(res.get("result")) is 0:
+            print "%s, %s daemon crash disbrib is not ready" % (v.END, dut)
+        else:
+            daemonVersionCount1Dict = {}
+            daemonVersionCount2Dict = {}
+            if res.get('status') is 1:
+                for r in res.get('result'):
+                    if r.get('name').find(version) is not -1:
+                        daemonVersionCount1Dict.update({r.get('name'): int(r.get('count1'))})
+                        crashUserTuple = sorted(daemonVersionCount1Dict.iteritems(), key=lambda x: x[1], reverse=True)
+                        daemonVersionCount2Dict.update({r.get('name'): int(r.get('count2'))})
+                        crashCountTuple = sorted(daemonVersionCount2Dict.iteritems(), key=lambda x: x[1], reverse=True)
+                try:
+                    crashUserTuple
+                    return crashUserTuple, crashCountTuple
+                except NameError:
+                    print "%s do not have daemon crash" % (version)
+                    return [("null", 0)], [("null", 0)]
 
 
 
@@ -479,6 +493,6 @@ if __name__ == '__main__':
     # print getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')
     # print getLatestStableUsedDailyActive("R1CL")
     # specVersion, dailyActive = getVersionMostUsedDailyActive("R3D")
-    specVersion, dailyActive = getVersionLatestStableUsedDailyActive("R3D")
-    crashTop10 = getSpecVersionDaemonCrashUserCountTop10Daily("R3D", specVersion)
-    print crashTop10
+    # specVersion, dailyActive = getVersionLatestStableUsedDailyActive("R3D")
+    # crashTop10 = getSpecVersionDaemonCrashUserCountTop10Daily("R3D", specVersion)
+    getVersionDistribAveDaily(v.R3G_VERSION_DIS, '全部活跃用户版本统计')

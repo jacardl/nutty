@@ -3,8 +3,10 @@ __author__ = 'Jacard'
 
 URL = 'http://tongji.d.pt.xiaomi.com/api/datas'
 
-START = "2017-08-28"
-END = "2017-09-03"
+START = "2017-09-13"
+END = "2017-09-19"
+# START = "2017-09-11"
+# END = "2017-09-11"
 
 # after END + 1 day 11:30, results will come out
 
