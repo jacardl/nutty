@@ -3,14 +3,15 @@ __author__ = 'Jacard'
 
 URL = 'http://tongji.d.pt.xiaomi.com/api/datas'
 
-START = "2017-09-13"
-END = "2017-09-19"
+START = "2017-10-09"
+END = "2017-10-19"
 # START = "2017-09-11"
 # END = "2017-09-11"
 
 # after END + 1 day 11:30, results will come out
 
 DUT = ["R1CM", "R1D", "R2D", "R1CL", "R3", "R3L", "R3D", "R3P", "R3G","R3A", "Android", "iOS"]  #支持监控整机kernel的产品
+# DUT = ["R2D", "Android", "iOS"]
 DUT_SUPPORT_DAEMON = ["R1CM", "R1D", "R2D", "R3", "R3D", "R3P", "R3G"] #支持监控daemon的产品
 
 # type code

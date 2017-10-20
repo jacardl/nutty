@@ -1,6 +1,7 @@
 #coding=utf8
 __author__ = 'Jac'
 import requests
+import requests.exceptions
 import collections
 
 import var as v
@@ -30,9 +31,14 @@ def getApi(url=v.URL, **kwargs):
                 "end": "",
             }
     option.update(kwargs)
-    res = s.get(url=v.URL, params=option, timeout=10)
+    try:
+        res = s.get(url=v.URL, params=option, timeout=20)
+    except (requests.exceptions.ChunkedEncodingError) as e:
+        res = s.get(url=v.URL, params=option, timeout=20)
+
     dataDict = eval(res.content)
     if len(dataDict.get("result")) is not 0:
+        print "type " + str(option.get("type")) + " ; subtype " + str(option.get("subtype")) + "; from " + str(option.get("start")) +" to " + str(option.get("end"))
         return dataDict
     else:
         print str(kwargs.get("type")) + " " + kwargs.get("subtype") + " can not obtain data from server between "+ kwargs.get("start")+ " and " + kwargs.get("end")
