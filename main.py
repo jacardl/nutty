@@ -85,7 +85,10 @@ def processSheet2Xlsx():
         crashCount = getSpecVersionKernelCrashAveDaily(dut, specVersion, SUBTYPE[0])
         crashUser = getSpecVersionKernelCrashAveDaily(dut, specVersion, SUBTYPE[1])
 
-        stab = round(1-crashUser/dailyActive, 5)
+        if dailyActive != 0:
+            stab = round(1-crashUser/dailyActive, 5)
+        else:
+            stab = 0
 
         wb[v.SHEET2].cell(row=dutX, column=newY).value = specVersion
         wb[v.SHEET2].cell(row=dutX+1, column=newY).value = crashCount
@@ -151,7 +154,10 @@ def processSheet4Xlsx():
         crashCount = getSpecVersionKernelCrashAveDaily(dut, specVersion, SUBTYPE[0])
         crashUser = getSpecVersionKernelCrashAveDaily(dut, specVersion, SUBTYPE[1])
 
-        stab = round(1-crashUser/dailyActive, 5)
+        if dailyActive != 0:
+            stab = round(1-crashUser/dailyActive, 5)
+        else:
+            stab = 0
 
         wb[v.SHEET4].cell(row=dutX, column=newY).value = specVersion
         wb[v.SHEET4].cell(row=dutX+1, column=newY).value = crashCount
@@ -194,7 +200,10 @@ def processSheet5Xlsx():
         crashCount = getSpecVersionKernelCrashAveDaily(dut, specVersion, SUBTYPE[0])
         crashUser = getSpecVersionKernelCrashAveDaily(dut, specVersion, SUBTYPE[1])
 
-        stab = round(1-crashUser/dailyActive, 5)
+        if dailyActive != 0:
+            stab = round(1-crashUser/dailyActive, 5)
+        else:
+            stab = 0
 
         wb[v.SHEET5].cell(row=dutX, column=newY).value = specVersion
         wb[v.SHEET5].cell(row=dutX+1, column=newY).value = crashCount
@@ -234,12 +243,19 @@ def processSheet6Xlsx():
         elif dut == DUT[-3] or dut == DUT[-4] or dut == DUT[-5] or dut == DUT[-6]: # P01/R01/R02/R03 不支持
             pass
         else:
-            specVersion, _ = getVersionLatestStableUsedDailyActive(dut)
-            dailyActive = getSpecVersionAveDailyActive(dut, specVersion)
+            try:
+                specVersion, _ = getVersionLatestStableUsedDailyActive(dut)
+                dailyActive = getSpecVersionAveDailyActive(dut, specVersion)
+            except Exception,e:
+                specVersion = ''
+                dailyActive = 0
         crashCount = getSpecVersionKernelCrashAveDaily(dut, specVersion, SUBTYPE[0])
         crashUser = getSpecVersionKernelCrashAveDaily(dut, specVersion, SUBTYPE[1])
 
-        stab = round(1-crashUser/dailyActive, 5)
+        if dailyActive != 0:
+            stab = round(1-crashUser/dailyActive, 5)
+        else:
+            stab = 0
 
         wb[v.SHEET6].cell(row=dutX, column=newY).value = specVersion
         wb[v.SHEET6].cell(row=dutX+1, column=newY).value = crashCount
