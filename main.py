@@ -34,9 +34,14 @@ def processSheet1Xlsx():
         crashUser = getKernelCrashAveDaily(dut, SUBTYPE[1])
         if dut == DUT[-1] or dut == DUT[-2]:
             dailyActive = getClientAPPAveDailyActive(dut)
+        elif dut == DUT[-3] or dut == DUT[-4] or dut == DUT[-5]:
+            dailyActive = getRepeaterAveDailyActive(dut)
         else:
             dailyActive = getAveDailyActive(dut)
-        stab = round(1-crashUser/dailyActive, 5)
+        if dailyActive != 0:
+            stab = round(1-crashUser/dailyActive, 5)
+        else:
+            stab = 0
 
         wb[v.SHEET1].cell(row=dutX, column=newY).value = crashCount
         wb[v.SHEET1].cell(row=dutX+1, column=newY).value = crashUser
@@ -72,6 +77,8 @@ def processSheet2Xlsx():
         if dut == DUT[-1] or dut == DUT[-2]:
             specVersion, _ = getClientAPPVersionMostUsedDaily(dut)
             dailyActive = getClientAPPSpecVersionAveDailyActive(dut, specVersion)
+        elif dut == DUT[-3] or dut == DUT[-4] or dut == DUT[-5] or dut == DUT[-6]: # P01/R01/R02/R03 不支持
+            pass
         else:
             specVersion, _ = getVersionMostUsedDailyActive(dut)
             dailyActive = getSpecVersionAveDailyActive(dut, specVersion)
@@ -224,6 +231,8 @@ def processSheet6Xlsx():
         if dut == DUT[-1] or dut == DUT[-2]:
             specVersion, _ = getClientAPPVersionLatestStable(dut)
             dailyActive = getClientAPPSpecVersionAveDailyActive(dut, specVersion)
+        elif dut == DUT[-3] or dut == DUT[-4] or dut == DUT[-5] or dut == DUT[-6]: # P01/R01/R02/R03 不支持
+            pass
         else:
             specVersion, _ = getVersionLatestStableUsedDailyActive(dut)
             dailyActive = getSpecVersionAveDailyActive(dut, specVersion)

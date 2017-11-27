@@ -3,8 +3,8 @@ __author__ = 'Jac'
 import requests
 import requests.exceptions
 import collections
-
 import var as v
+import data as d
 
 # 数据工厂 task
 # v-路由器-crash-app次数
@@ -60,6 +60,7 @@ def getAveCount1ForSpecName(data, name):
         return 0
 
 
+# abandon
 def getDailyActive(type, **kwargs):
     """
     :param name: rom/android/pc/mac/ios
@@ -90,18 +91,7 @@ def getAveDailyActive(dut, **kwargs):
      'result': [{'name': 'android', 'subtype': '\xe6\x97\xa5\xe6\xb4\xbb\xe8\xb7\x83', 'date': '2016-09-27 00:00:00.0',
      'count1': '27291', 'count2': '0', 'type': 241},
     """
-    command = {
-        "R1CM" : "v.R1CM",
-        "R1D" : "v.R1D",
-        "R2D" : "v.R2D",
-        "R1CL" : "v.R1CL",
-        "R3" : "v.R3",
-        "R3L" : "v.R3L",
-        "R3D" : "v.R3D",
-        "R3P" : "v.R3P",
-        "R3G" : "v.R3G",
-        "R3A" : "v.R3A",
-    }
+    command = d.commandRouterModel
     type = eval(command.get(dut))
     option = {
         "type": type,
@@ -113,6 +103,28 @@ def getAveDailyActive(dut, **kwargs):
     res = getApi(**option)
     if res is not None:
         return getAveCount1ForSpecName(res, "rom")
+    else:
+        return 0
+
+
+def getRepeaterAveDailyActive(dut, **kwargs):
+    """
+    :param dut: R01,R02,R03
+    :param kwargs:
+    :return:
+    """
+    command = d.commandRepeaterModel
+    type = eval(command.get(dut))
+    option = {
+        "type": type,
+        "subtype": "日活跃",
+        "start": v.START,
+        "end": v.END,
+    }
+    option.update(kwargs)
+    res = getApi(**option)
+    if res is not None:
+        return getAveCount1ForSpecName(res, dut)
 
 
 def getClientAPPAveDailyActive(name, **kwargs):
@@ -234,18 +246,7 @@ def getVersionMostUsedDailyActive(dut):
     """
     :param type: v.R1CM_VERSION_DIS/v.R1D_VERSION_DIS/v.R2d_VERSION_DIS...
     """
-    command = {
-        "R1CM": "getVersionDistribDaily(v.R1CM_VERSION_DIS, '全部活跃用户版本分布')",
-        "R1D": "getVersionDistribDaily(v.R1D_VERSION_DIS, '全部活跃用户版本分布')",
-        "R2D": "getVersionDistribDaily(v.R2D_VERSION_DIS, '全部活跃用户版本分布')",
-        "R1CL": "getVersionDistribDaily(v.R1CL_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3": "getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3L": "getVersionDistribDaily(v.R3L_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3D": "getVersionDistribDaily(v.R3D_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3P": "getVersionDistribDaily(v.R3P_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3G": "getVersionDistribDaily(v.R3G_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3A": "getVersionDistribDaily(v.R3A_VERSION_DIS, '全部活跃用户版本统计')",
-    }
+    command = d.commandDistribDaily
     res = eval(command.get(dut))
     version = res[0][0]
     count = res[0][1]
@@ -256,18 +257,7 @@ def getVersionSecondMostUsedDailyActive(dut):
     """
     :param type: v.R1CM_VERSION_DIS/v.R1D_VERSION_DIS/v.R2d_VERSION_DIS...
     """
-    command = {
-        "R1CM": "getVersionDistribDaily(v.R1CM_VERSION_DIS, '全部活跃用户版本分布')",
-        "R1D": "getVersionDistribDaily(v.R1D_VERSION_DIS, '全部活跃用户版本分布')",
-        "R2D": "getVersionDistribDaily(v.R2D_VERSION_DIS, '全部活跃用户版本分布')",
-        "R1CL": "getVersionDistribDaily(v.R1CL_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3": "getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3L": "getVersionDistribDaily(v.R3L_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3D": "getVersionDistribDaily(v.R3D_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3P": "getVersionDistribDaily(v.R3P_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3G": "getVersionDistribDaily(v.R3G_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3A": "getVersionDistribDaily(v.R3A_VERSION_DIS, '全部活跃用户版本统计')",
-    }
+    command = d.commandDistribDaily
     res = eval(command.get(dut))
     version = res[1][0]
     count = res[1][1]
@@ -278,18 +268,7 @@ def getVersionThirdMostUsedDailyActive(dut):
     """
     :param type: v.R1CM_VERSION_DIS/v.R1D_VERSION_DIS/v.R2d_VERSION_DIS...
     """
-    command = {
-        "R1CM": "getVersionDistribDaily(v.R1CM_VERSION_DIS, '全部活跃用户版本分布')",
-        "R1D": "getVersionDistribDaily(v.R1D_VERSION_DIS, '全部活跃用户版本分布')",
-        "R2D": "getVersionDistribDaily(v.R2D_VERSION_DIS, '全部活跃用户版本分布')",
-        "R1CL": "getVersionDistribDaily(v.R1CL_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3": "getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3L": "getVersionDistribDaily(v.R3L_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3D": "getVersionDistribDaily(v.R3D_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3P": "getVersionDistribDaily(v.R3P_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3G": "getVersionDistribDaily(v.R3G_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3A": "getVersionDistribDaily(v.R3A_VERSION_DIS, '全部活跃用户版本统计')",
-    }
+    command = d.commandDistribDaily
     res = eval(command.get(dut))
     version = res[2][0]
     count = res[2][1]
@@ -300,18 +279,7 @@ def getVersionLatestStableUsedDailyActive(dut):
     """
     :param type: v.R1CM_VERSION_DIS/v.R1D_VERSION_DIS/v.R2d_VERSION_DIS...
     """
-    command = {
-        "R1CM": "getVersionDistribDaily(v.R1CM_VERSION_DIS, '全部活跃用户版本分布')",
-        "R1D": "getVersionDistribDaily(v.R1D_VERSION_DIS, '全部活跃用户版本分布')",
-        "R2D": "getVersionDistribDaily(v.R2D_VERSION_DIS, '全部活跃用户版本分布')",
-        "R1CL": "getVersionDistribDaily(v.R1CL_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3": "getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3L": "getVersionDistribDaily(v.R3L_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3D": "getVersionDistribDaily(v.R3D_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3P": "getVersionDistribDaily(v.R3P_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3G": "getVersionDistribDaily(v.R3G_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3A": "getVersionDistribDaily(v.R3A_VERSION_DIS, '全部活跃用户版本统计')",
-    }
+    command = d.commandDistribDaily
     res = eval(command.get(dut))
     for version, count in res:
         versionSplit = version.split('.')
@@ -448,18 +416,7 @@ def getSpecVersionDaemonCrashDaily(dut, version, **kwargs):
 
 
 def getSpecVersionDailyActive(dut, version):
-    command = {
-        "R1CM": "getVersionDistribDaily(v.R1CM_VERSION_DIS, '全部活跃用户版本分布')",
-        "R1D": "getVersionDistribDaily(v.R1D_VERSION_DIS, '全部活跃用户版本分布')",
-        "R2D": "getVersionDistribDaily(v.R2D_VERSION_DIS, '全部活跃用户版本分布')",
-        "R1CL": "getVersionDistribDaily(v.R1CL_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3": "getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3L": "getVersionDistribDaily(v.R3L_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3D": "getVersionDistribDaily(v.R3D_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3P": "getVersionDistribDaily(v.R3P_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3G": "getVersionDistribDaily(v.R3G_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3A": "getVersionDistribDaily(v.R3A_VERSION_DIS, '全部活跃用户版本统计')",
-    }
+    command = d.commandDistribDaily
     res = eval(command.get(dut))
     # version = version.split('.')
     # number = int(version[0]) * 1000 * 1000 + int(version[1]) * 1000 + int(version[2])
@@ -471,18 +428,7 @@ def getSpecVersionDailyActive(dut, version):
 
 
 def getSpecVersionAveDailyActive(dut, version):
-    command = {
-        "R1CM": "getVersionDistribAveDaily(v.R1CM_VERSION_DIS, '全部活跃用户版本分布')",
-        "R1D": "getVersionDistribAveDaily(v.R1D_VERSION_DIS, '全部活跃用户版本分布')",
-        "R2D": "getVersionDistribAveDaily(v.R2D_VERSION_DIS, '全部活跃用户版本分布')",
-        "R1CL": "getVersionDistribAveDaily(v.R1CL_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3": "getVersionDistribAveDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3L": "getVersionDistribAveDaily(v.R3L_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3D": "getVersionDistribDaily(v.R3D_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3P": "getVersionDistribDaily(v.R3P_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3G": "getVersionDistribDaily(v.R3G_VERSION_DIS, '全部活跃用户版本统计')",
-        "R3A": "getVersionDistribDaily(v.R3A_VERSION_DIS, '全部活跃用户版本统计')",
-    }
+    command = d.commandDistribAveDaily
     res = eval(command.get(dut))
     if len(res) is not 0:
         for r in res:
@@ -498,7 +444,14 @@ def getSpecVersionDaemonCrashUserCountTop10Daily(dut, version):
 if __name__ == '__main__':
     # print getVersionDistribDaily(v.R3_VERSION_DIS, '全部活跃用户版本统计')
     # print getLatestStableUsedDailyActive("R1CL")
-    # specVersion, dailyActive = getVersionMostUsedDailyActive("R3D")
+    # print  getVersionMostUsedDailyActive("R3D")
+    # print  getVersionMostUsedDailyActive("R02")
     # specVersion, dailyActive = getVersionLatestStableUsedDailyActive("R3D")
     # crashTop10 = getSpecVersionDaemonCrashUserCountTop10Daily("R3D", specVersion)
-    getVersionDistribAveDaily(v.R3G_VERSION_DIS, '全部活跃用户版本统计')
+    # getVersionDistribAveDaily(v.R3G_VERSION_DIS, '全部活跃用户版本统计')
+    # print getRepeaterAveDailyActive("R01")
+    # print getAveDailyActive("P01")
+    print getVersionMostUsedDailyActive("R02")
+    # print getVersionDistribDaily(v.R01_VERSION_DIS, '日活版本分布')
+    # print getKernelCrashAveDaily("R3D", "CrashLog次数")
+    # print getKernelCrashAveDaily("R01", "CrashLog用户数")
